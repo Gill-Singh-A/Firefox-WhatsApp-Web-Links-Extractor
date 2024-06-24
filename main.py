@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-import os
+import os, subprocess
 from pathlib import Path
 from datetime import date
 from optparse import OptionParser
@@ -27,6 +27,12 @@ def get_arguments(*args):
         parser.add_option(arg[0], arg[1], dest=arg[2], help=arg[3])
     return parser.parse_args()[0]
 
+def correctLink(link):
+    for i in range(len(link)):
+        if link[i:].startswith("http"):
+            return link[i:]
+    return ''
+
 if __name__ == "__main__":
     arguments = get_arguments(('-p', "--path", "path", f"Path to Firefox Cache Folder (Default={default_path})"),
                               ('-w', "--write", "write", "Write to File (Default=Current Date and Time)"))
@@ -41,3 +47,6 @@ if __name__ == "__main__":
     for path, folders, files in os.walk(arguments.path):
         if "whatsapp" in path:
                 paths.extend([f"{path}/{file}" for file in files if "sqlite" in file])
+    links = []
+    for path in paths:
+        links.extend([correctLink(link) for link in subprocess.check_output(["strings", f"{path}"]).decode().split('\n') if "http" in link])
