@@ -50,3 +50,5 @@ if __name__ == "__main__":
     links = []
     for path in paths:
         links.extend([correctLink(link) for link in subprocess.check_output(["strings", f"{path}"]).decode().split('\n') if "http" in link])
+    with open(arguments.write, 'w') as file:
+        file.write('\n'.join(links))
