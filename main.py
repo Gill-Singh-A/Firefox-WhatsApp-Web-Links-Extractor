@@ -50,5 +50,9 @@ if __name__ == "__main__":
     links = []
     for path in paths:
         links.extend([correctLink(link) for link in subprocess.check_output(["strings", f"{path}"]).decode().split('\n') if "http" in link])
+    links = list(set(links))
+    links.sort()
+    display('+', f"Links Extracted => {Back.MAGENTA}{len(links)}{Back.RESET}")
+    print('\n'.join([f"* {Fore.CYAN}{link}{Fore.RESET}" for link in links]))
     with open(arguments.write, 'w') as file:
         file.write('\n'.join(links))
